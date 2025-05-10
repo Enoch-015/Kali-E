@@ -9,88 +9,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { motion } from "framer-motion"
-import { Loader2, TriangleAlert } from "lucide-react"
-
-import { FaGithub } from "react-icons/fa"
-import { FcGoogle } from "react-icons/fc"
-import { toast } from "sonner"
-
-import { signIn } from "next-auth/react"
+import { Loader2 } from "lucide-react"
 
 export default function LoginForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState("login")
 
-
-  type FormValues = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-  const [values, setValues] = useState<FormValues>({
-    name: "",
-    email:"",
-    password: ""
-  })
-
-
-  const handleProvider = (
-      event: React.MouseEvent<HTMLButtonElement>,
-      value: "github" | "google"
-    ) => {
-      event.preventDefault()
-      signIn(value, { callbackUrl: "/assistant" })
-    }
-
-
-  const handleSignUpSubmit = async(e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    const res = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values)
-    })
-    
-    const data = await res.json()
-    error && setError(null)
-
-    if(res.ok) {
+    // Simulate authentication
+    setTimeout(() => {
       setIsLoading(false)
-      setActiveTab("login")
-      toast.success(data.message)
-      router.push("/")
-    }else if (res.status === 400) {
-       setError(data.message)
-       setIsLoading(false)
-     } else if (res.status === 500) {
-       setError(data.message)
-       setIsLoading(false)
-     }
-  }
-  
-
-   const handleSignInSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: values.email,
-      password: values.password
-    })
-    if(res?.ok) {
-       router.push("/assistant")
-       toast.success("Login successful")
-    } else if (res?.status === 401) {
-       setError("Invalid Credentials")
-       setIsLoading(false)
-    } else {
-      setError("Something went wrong")
-    }
+      router.push("/assistant")
+    }, 1000)
   }
 
   return (
@@ -113,7 +47,7 @@ export default function LoginForm() {
 
         <div className="bg-zinc-900/30 backdrop-blur-sm rounded-lg p-6 border border-zinc-800/50">
           <TabsContent value="login">
-            <form onSubmit={handleSignInSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-300">
                   Email
@@ -124,8 +58,6 @@ export default function LoginForm() {
                   placeholder="name@example.com"
                   required
                   className="bg-zinc-800/50 border-zinc-700 focus:border-white/50 transition-all duration-300"
-                  value={values.email}
-                  onChange={(e) => setValues({ ...values, email: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -137,17 +69,9 @@ export default function LoginForm() {
                   type="password"
                   required
                   className="bg-zinc-800/50 border-zinc-700 focus:border-white/50 transition-all duration-300"
-                  value={values.password}
-                  onChange={(e) => setValues({ ...values, password: e.target.value })}
                 />
               </div>
-              {!!error && (
-                 <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
-                   <TriangleAlert />
-                   <p>{error}</p>
-                 </div>
-               )}
-              <div className="pt-2 space-y-4">
+              <div className="pt-2">
                 <Button
                   type="submit"
                   className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
@@ -162,26 +86,12 @@ export default function LoginForm() {
                     "Login"
                   )}
                 </Button>
-                <Button
-                  type="submit"
-                  className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
-                  onClick={(e) => handleProvider(e, "google")}
-                >
-                 <FcGoogle className="size-8 left-2.5 top-2.5" /> 
-                </Button>
-                <Button
-                  type="submit"
-                  className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
-                  onClick={(e) => handleProvider(e, "github")}
-                >
-                  <FaGithub className="left-2.5 top-2.5" /> 
-                </Button>
               </div>
             </form>
           </TabsContent>
 
           <TabsContent value="signup">
-            <form onSubmit={handleSignUpSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-300">
                   Name
@@ -191,8 +101,6 @@ export default function LoginForm() {
                   placeholder="Your name"
                   required
                   className="bg-zinc-800/50 border-zinc-700 focus:border-white/50 transition-all duration-300"
-                  value={values.name}
-                  onChange={(e) => setValues({ ...values, name: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -205,8 +113,6 @@ export default function LoginForm() {
                   placeholder="name@example.com"
                   required
                   className="bg-zinc-800/50 border-zinc-700 focus:border-white/50 transition-all duration-300"
-                  value={values.email}
-                  onChange={(e) => setValues({ ...values, email: e.target.value })}
                 />
               </div>
               <div className="space-y-2">
@@ -218,17 +124,9 @@ export default function LoginForm() {
                   type="password"
                   required
                   className="bg-zinc-800/50 border-zinc-700 focus:border-white/50 transition-all duration-300"
-                  value={values.password}
-                  onChange={(e) => setValues({ ...values, password: e.target.value })}
                 />
               </div>
-              {!!error && (
-                 <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
-                   <TriangleAlert />
-                   <p>{error}</p>
-                 </div>
-               )}
-              <div className="pt-2 space-y-2">
+              <div className="pt-2">
                 <Button
                   type="submit"
                   className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
@@ -242,20 +140,6 @@ export default function LoginForm() {
                   ) : (
                     "Sign Up"
                   )}
-                </Button>
-                <Button
-                  type="submit"
-                  className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
-                  onClick={(e) => handleProvider(e, "google")}
-                >
-                   <FcGoogle className="size-8 left-2.5 top-2.5" /> 
-                </Button>
-                <Button
-                  type="submit"
-                  className="w-full bg-white text-black hover:bg-gray-200 transition-all duration-300"
-                  onClick={(e) => handleProvider(e, "github")}
-                >
-                 <FaGithub className="left-2.5 top-2.5" /> 
                 </Button>
               </div>
             </form>

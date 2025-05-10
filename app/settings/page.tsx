@@ -12,9 +12,6 @@ import { Switch } from "@/components/ui/switch"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { motion } from "framer-motion"
 import { toast } from "@/hooks/use-toast"
-import { signOut } from "next-auth/react"
-
-
 
 // Interface for MCP server configuration
 interface MCPServer {
@@ -47,15 +44,6 @@ export default function SettingsPage() {
     apiKey: "",
     description: "",
   })
-
-  //Logout functionality
-  const handleSignOut = async () => {
-  await signOut({
-    redirect: false,
-  })
-  router.push("/")
-}
-
 
   const handleSave = () => {
     setIsSaving(true)
@@ -625,7 +613,7 @@ export default function SettingsPage() {
         >
           <Button
             variant="outline"
-            onClick={() => handleSignOut()}
+            onClick={() => router.push("/")}
             className="bg-zinc-900/50 border-zinc-700 hover:bg-zinc-800/70 text-white px-8"
           >
             <LogOut className="mr-2 h-4 w-4" />
