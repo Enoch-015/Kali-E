@@ -10,16 +10,16 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "Kali-E Voice Assistant",
   description: "An advanced voice assistant with AI capabilities",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}

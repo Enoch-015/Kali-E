@@ -35,7 +35,7 @@ interface UploadedFile {
 }
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://enoch-015-web--8000.prod1a.defang.dev/api/",
   headers: { "Content-Type": "application/json" },
 })
 api.interceptors.response.use(
