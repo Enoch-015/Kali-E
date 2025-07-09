@@ -1,0 +1,12 @@
+django
+django-cors-headers
+djangorestframework
+livekit
+livekit-agents
+livekit-api
+livekit-plugins-openai
+livekit-plugins-silero
+livekit-protocol
+django-environ
+psycopg2-binary
+sqlparse
