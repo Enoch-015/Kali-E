@@ -10,3 +10,4 @@ livekit-protocol
 django-environ
 psycopg2-binary
 sqlparse
+livekit-agents[turn-detector]~=1.0
