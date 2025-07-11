@@ -4,6 +4,7 @@ import asyncio
 import aiohttp
 # import sounddevice as sd
 from dotenv import load_dotenv
+from livekit.plugins import silero
 
 from livekit.plugins.turn_detector.english import EnglishModel
 from livekit.plugins import deepgram
@@ -162,6 +163,7 @@ async def _setup_session(room_param) -> AgentSession:
     session = AgentSession(
         turn_detection=EnglishModel(),
         stt=deepgram.STT(model="nova-3", language="en"),
+        vad=ctx.proc.userdata["vad"],
         llm=llm, 
         tts=tts)
     await session.start(
@@ -184,6 +186,9 @@ async def end_livekit_session(room_name: str, reason: str = "session ended") -> 
     return True
 
 
+def prewarm(proc: agents.JobProcess):
+    proc.userdata["vad"] = silero.VAD.load()
+
 async def send_message_to_session(room_name: str, message: str) -> bool:
     session = active_sessions.get(room_name)
     if not session:
@@ -201,4 +206,4 @@ async def entrypoint(ctx: agents.JobContext):
 
 if __name__ == "__main__":
     logger.info("Starting LiveKit agent worker")
-    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint))
+    agents.cli.run_app(agents.WorkerOptions(entrypoint_fnc=entrypoint,prewarm_fnc=prewarm))

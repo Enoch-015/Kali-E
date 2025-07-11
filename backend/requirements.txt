@@ -14,3 +14,4 @@ livekit-agents[turn-detector]~=1.0
 livekit-plugins-deepgram
 python-dotenv
 tensorflow
+livekit-agents[silero]~=1.0
