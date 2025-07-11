@@ -2,7 +2,7 @@ import os
 import logging
 import asyncio
 import aiohttp
-import sounddevice as sd
+# import sounddevice as sd
 from dotenv import load_dotenv
 
 from livekit.plugins.turn_detector.english import EnglishModel
@@ -38,59 +38,59 @@ except ImportError:
     logger.warning("Could not import prompts.py, using defaults")
 
 
-def init_audio_devices():
-    """Initialize and select audio devices at runtime."""
-    try:
-        devices = sd.query_devices()
-        logger.info("Available audio devices:")
-        for i, d in enumerate(devices):
-            kinds = []
-            if d['max_input_channels'] > 0:
-                kinds.append("Input")
-            if d['max_output_channels'] > 0:
-                kinds.append("Output")
-            logger.info(f"[{i}] {d['name']} — {'/'.join(kinds)}")
+# def init_audio_devices():
+#     """Initialize and select audio devices at runtime."""
+#     try:
+#         devices = sd.query_devices()
+#         logger.info("Available audio devices:")
+#         for i, d in enumerate(devices):
+#             kinds = []
+#             if d['max_input_channels'] > 0:
+#                 kinds.append("Input")
+#             if d['max_output_channels'] > 0:
+#                 kinds.append("Output")
+#             logger.info(f"[{i}] {d['name']} — {'/'.join(kinds)}")
 
-        # pick defaults
-        default_in = next(i for i, d in enumerate(devices) if d['max_input_channels'] > 0)
-        default_out = next(i for i, d in enumerate(devices) if d['max_output_channels'] > 0)
+#         # pick defaults
+#         default_in = next(i for i, d in enumerate(devices) if d['max_input_channels'] > 0)
+#         default_out = next(i for i, d in enumerate(devices) if d['max_output_channels'] > 0)
 
-        # override via env if provided...
-        sound_dev = os.getenv("SOUND_DEVICE")
-        if sound_dev:
-            try:
-                idx = int(sound_dev)
-            except ValueError:
-                idx = next((i for i, d in enumerate(devices)
-                            if sound_dev.lower() in d['name'].lower()
-                            and d['max_input_channels'] > 0), default_in)
-            sd.default.device = (idx, sd.default.device[1])
-            logger.info(f"Using input device #{idx} from SOUND_DEVICE")
-        else:
-            sd.default.device = (default_in, sd.default.device[1])
-            logger.info(f"Using default input device #{default_in}")
+#         # override via env if provided...
+#         sound_dev = os.getenv("SOUND_DEVICE")
+#         if sound_dev:
+#             try:
+#                 idx = int(sound_dev)
+#             except ValueError:
+#                 idx = next((i for i, d in enumerate(devices)
+#                             if sound_dev.lower() in d['name'].lower()
+#                             and d['max_input_channels'] > 0), default_in)
+#             sd.default.device = (idx, sd.default.device[1])
+#             logger.info(f"Using input device #{idx} from SOUND_DEVICE")
+#         else:
+#             sd.default.device = (default_in, sd.default.device[1])
+#             logger.info(f"Using default input device #{default_in}")
 
-        sound_out = os.getenv("SOUND_OUTPUT")
-        if sound_out:
-            try:
-                idx = int(sound_out)
-            except ValueError:
-                idx = next((i for i, d in enumerate(devices)
-                            if sound_out.lower() in d['name'].lower()
-                            and d['max_output_channels'] > 0), default_out)
-            sd.default.device = (sd.default.device[0], idx)
-            logger.info(f"Using output device #{idx} from SOUND_OUTPUT")
-        else:
-            sd.default.device = (sd.default.device[0], default_out)
-            logger.info(f"Using default output device #{default_out}")
+#         sound_out = os.getenv("SOUND_OUTPUT")
+#         if sound_out:
+#             try:
+#                 idx = int(sound_out)
+#             except ValueError:
+#                 idx = next((i for i, d in enumerate(devices)
+#                             if sound_out.lower() in d['name'].lower()
+#                             and d['max_output_channels'] > 0), default_out)
+#             sd.default.device = (sd.default.device[0], idx)
+#             logger.info(f"Using output device #{idx} from SOUND_OUTPUT")
+#         else:
+#             sd.default.device = (sd.default.device[0], default_out)
+#             logger.info(f"Using default output device #{default_out}")
 
-        info_in = sd.query_devices(sd.default.device[0])
-        info_out = sd.query_devices(sd.default.device[1])
-        logger.info(f"Confirmed input: {info_in['name']}")
-        logger.info(f"Confirmed output: {info_out['name']}")
-    except Exception as e:
-        logger.error(f"Audio init failed: {e}")
-        logger.warning("Falling back to system audio defaults")
+#         info_in = sd.query_devices(sd.default.device[0])
+#         info_out = sd.query_devices(sd.default.device[1])
+#         logger.info(f"Confirmed input: {info_in['name']}")
+#         logger.info(f"Confirmed output: {info_out['name']}")
+#     except Exception as e:
+#         logger.error(f"Audio init failed: {e}")
+#         logger.warning("Falling back to system audio defaults")
 
 
 
@@ -122,7 +122,6 @@ active_sessions: dict[str, AgentSession] = {}
 
 
 async def _setup_session(room_param) -> AgentSession:
-    init_audio_devices()
 
     openai_key = os.getenv("OPENAI_API_KEY")
     livekit_url = os.getenv("LIVEKIT_URL")
