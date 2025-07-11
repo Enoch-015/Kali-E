@@ -93,6 +93,8 @@ def init_audio_devices():
         logger.warning("Falling back to system audio defaults")
 
 
+
+
 class KaliAssistant(Agent):
     def __init__(self):
         super().__init__(instructions=INSTRUCTIONS)
